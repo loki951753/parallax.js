@@ -37,7 +37,7 @@ if (typeof Zepto === 'undefined') { throw new Error('Parallax.js\'s script requi
     // ==============================
 
     $.fn.parallax = function(opts) {
-        options = $.extend({}, $.fn.parallax.defaults, opts);
+        options = $.extend(true, {}, $.fn.parallax.defaults, opts);
 
         return this.each(function() {
             $pages = $(this);
@@ -59,9 +59,13 @@ if (typeof Zepto === 'undefined') { throw new Error('Parallax.js\'s script requi
         loading: false,         // 是否需要加载页
         indicator: false,       // 是否要有指示导航
         arrow: false,           // 是否要有箭头
+        music: {
+            src     : '', 
+            autoplay: true,
+            loop    : true
+        },              // 是否要有背景音乐
         onchange: function(){}, // 回调函数
         orientationchange: function(){}	// 屏幕翻转
-
     };
 
 
@@ -555,6 +559,53 @@ if (typeof Zepto === 'undefined') { throw new Error('Parallax.js\'s script requi
         if (options.arrow) {
             $pageArr.append('<span class="parallax-arrow"></span>');
             $($pageArr[pageCount-1]).find('.parallax-arrow').remove();
+        }
+
+        function isEmpty(obj) {
+            for (var prop in obj) {
+                if (obj.hasOwnProperty(prop))
+                    return false;
+            }
+            return true;
+        }
+
+        if ($.isPlainObject(options.music) && !isEmpty(options.music)) {
+            //生成代码片段
+            var codeStr = '<audio id="player"></audio>';
+            $('body').append(codeStr);
+
+            var myAudio = $('audio').get(0);
+            if (options.music.src) {
+                myAudio.src = options.music.src;
+            } else {
+                console.log("music source expected.");
+            }
+
+            if (options.music.autoplay) {
+                myAudio.autoplay = options.music.autoplay;
+            } else {
+                console.log("audio init with not-autoplay");
+            }
+
+            if (options.music.loop) {
+                myAudio.loop = options.music.loop;
+            } else {
+                console.log("audio init with not-loop");
+            }
+
+            $('#player').on('touchend', function(e){
+                e.preventDefault();
+                
+                var isPaused = myAudio.paused;
+
+                if (isPaused) {
+                    $(this).addClass('isPlaying');
+                    myAudio.play();
+                } else {
+                    $(this).removeClass('isPlaying');
+                    myAudio.pause();
+                }
+            })
         }
     });
     

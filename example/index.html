@@ -52,6 +52,26 @@
 		position: absolute;
 		left: 185px; top: 250px;
 	}
+	#player{
+		display: inline-block;
+		position: fixed;
+		bottom:40px;
+		right: 30px;
+		width: 35px;
+		height: 35px;
+		background: url(img/player.png) no-repeat center center;
+		-webkit-background-size: cover;
+		background-size: cover;
+		z-index: 99;
+	}
+	#player.isPlaying{
+		animation:playRotate 2s infinite linear;
+		-webkit-animation: playRotate 2s infinite linear;
+	}
+	@-webkit-keyframes playRotate{
+		from {-webkit-transform: rotate(0deg);}
+		to {-webkit-transform: rotate(360deg);}
+	}
 	</style>
 </head>
 <body>
@@ -110,7 +130,7 @@
 		 */
 		onchange: function(index, element, direction) {
 			// code here...
-			// console.log(index, element, direction);
+			console.log(index, element, direction);
 		},
 		/*
 		 * 横竖屏检测
