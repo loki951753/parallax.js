@@ -112,12 +112,13 @@ if (typeof Zepto === 'undefined') { throw new Error('Parallax.js\'s script requi
             $pageArr[0].style.display = 'block'; // 不能通过 css 来定义，不然在 Android 和 iOS 下会有 bug
         }
 
-
 		if (!options.loading) {
             $($pageArr[curPage]).addClass('current');
             options.onchange(curPage, $pageArr[curPage], direction);
             animShow();
         }
+
+        $('#player').addClass('isPlaying');
 
     }
 
@@ -523,8 +524,6 @@ if (typeof Zepto === 'undefined') { throw new Error('Parallax.js\'s script requi
         event.stopPropagation();    // 事件代理无法阻止冒泡，所以要绑定取消
     })
 
-
-
     // 页面（含资源）加载完成
     // ==============================
 
@@ -571,7 +570,7 @@ if (typeof Zepto === 'undefined') { throw new Error('Parallax.js\'s script requi
 
         if ($.isPlainObject(options.music) && !isEmpty(options.music)) {
             //生成代码片段
-            var codeStr = '<audio id="player"></audio>';
+            var codeStr = '<div id="player"><audio></audio></div>';
             $('body').append(codeStr);
 
             var myAudio = $('audio').get(0);
@@ -593,13 +592,21 @@ if (typeof Zepto === 'undefined') { throw new Error('Parallax.js\'s script requi
                 console.log("audio init with not-loop");
             }
 
+            myAudio.addEventListener("play", function(){
+                $('#player').addClass('isPlaying');
+            });
+
+            myAudio.addEventListener("pause", function(){
+                $('#player').removeClass('isPlaying');
+            });
+
             $('#player').on('touchend', function(e){
                 e.preventDefault();
                 
                 var isPaused = myAudio.paused;
 
                 if (isPaused) {
-                    $(this).addClass('isPlaying');
+                    $(this).addClass('isPlaying');//duplicated line 607 to fix bug in some mobile phone, replace it if you have better code
                     myAudio.play();
                 } else {
                     $(this).removeClass('isPlaying');
@@ -623,7 +630,4 @@ if (typeof Zepto === 'undefined') { throw new Error('Parallax.js\'s script requi
 			options.orientationchange('landscape') 
 		} 	
     }, false);
-
-
-
 }(Zepto)
